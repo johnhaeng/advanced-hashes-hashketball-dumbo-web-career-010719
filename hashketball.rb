@@ -119,6 +119,18 @@ def game_hash
   }
 end
 
+def players_by_number(number)
+  game_hash.each do |location, datas|
+    datas[:players].each do |name, stats|
+      if stats[:number] == number
+        binding.pry
+        return name
+      end
+    end
+  end
+end
+
+puts players_by_number(33)
 
 def num_points_scored(name)
   game_hash.each do |location, datas|
@@ -172,16 +184,37 @@ def player_numbers(name)
   jersey_array.sort
 end
 
-def player_stats(player)
-  new_hash = game_hash
-  new_hash.each do |location, data|
-    data.each do |components, stats|
-      if stats.include?(player)
-       return new_hash[location][components][player]
+# def player_stats(name)
+#   new_hash = game_hash
+#   new_hash.each do |location, data|
+#     data.each do |components, stats|
+#       if stats.include?(name)
+#       return new_hash[location][components][name]
+#       end
+#     end
+#   end
+# end
+
+# why do I have to go through each nested hash here?
+def player_stats(name)
+  stats_hash = {}
+  
+  game_hash.each do |location, data|
+    game_hash[location].each do |nested_key, nested_value|
+      if nested_key == :players
+        game_hash[loaction][:players].each do |player, stats|
+          if name == player
+            stats_hash = game_hash[location][:players][name]
+          end
+        end
       end
     end
   end
+  stats_hash
 end
+
+player_stats('Brooke Lopez')
+
 
 
 
@@ -255,63 +288,5 @@ end
 winning_team
 
 
-def player_with_longest_name
-  name_length = nil
-  longest = ''
-  # shortest = ''
-
-  game_hash.each do |location, data|
-    data[:players].each do |names, stats|
-      
-      if longest.length < names.length
-      # if longest.length > names.length || 
-      # name_length == nil
-        longest = names
-      # if name_length == nil || shortest.length < names.length
-      #   shortest = names
-      end
-
-      puts "#{names}: #{names.length}"
-    end
-  end
-
-  longest
-  # shortest
-end
 
 
-def shortest_name
-  short = []
-
-  game_hash.each do |location, data|
-    data[:players].each do |names, stats|
-      short.push(names)
-    end
-  end
-  
-  short.sort {|n1, n2| n1.length <=> n2.length}
-end
-
-
-def longest_name_steats_a_ton?
-  longest = []
-  steal_stat = nil
-  steal_player = ''
-
-  game_hash.each do |location, data|
-    data[:players].each do |names, stats|
-      longest.push(names)    
-    end
-
-    data[:players].each do |names, stats|
-      if steal_stat == nil || stats[:steals] > steal_stat
-        puts "#{names}: #{stats[:steals]}"
-        steal_player = names
-      end
-    end
-  end
-  longest_player = longest.sort {|n1, n2| n2.length <=> n1.length}[0]
-
-
-  longest_player == steal_player
-end
